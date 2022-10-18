@@ -11,7 +11,8 @@ static void activate (GtkApplication *app, gpointer user_data) {
     // Cerate image
     image = gtk_image_new_from_file("./image/wallpaperPrincipal.jpg");
     gtk_image_set_pixel_size(GTK_IMAGE(image), 200);
-    gtk_widget_set_size_request (GTK_WIDGET(image), 120, 120);
+    gtk_image_set_from_icon_name(GTK_IMAGE(image), "wallpaper", 100);
+    image = gtk_image_new_from_icon_name("name", GTK_ICON_SIZE_DIALOG);
 
     // Create container fixed
     fixed = gtk_fixed_new();
