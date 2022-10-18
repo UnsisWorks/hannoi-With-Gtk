@@ -1,5 +1,5 @@
 #include <gtk/gtk.h>
-#include "gtk_auto.h"
+//#include "gtk_auto.h"
 
 // funtion construct
 static void activate (GtkApplication *app, gpointer user_data) {
@@ -11,6 +11,7 @@ static void activate (GtkApplication *app, gpointer user_data) {
     // Cerate image
     image = gtk_image_new_from_file("./image/wallpaperPrincipal.jpg");
     gtk_image_set_pixel_size(GTK_IMAGE(image), 200);
+    gtk_widget_set_size_request (GTK_WIDGET(image), 120, 120);
 
     // Create container fixed
     fixed = gtk_fixed_new();
@@ -26,8 +27,7 @@ static void activate (GtkApplication *app, gpointer user_data) {
     button_box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
     button = gtk_button_new();
     gtk_button_set_image(GTK_BUTTON(button), image);
-    // Add button_box to fixed en position absolute
-    // button = gtk_button_new_with_label ("Hello World");
+    
     gtk_container_add (GTK_CONTAINER (button_box), button);
     gtk_fixed_put(GTK_FIXED(fixed), button_box, 170, 150);
 
