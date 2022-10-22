@@ -1,44 +1,104 @@
 #include <gtk/gtk.h>
 //#include "gtk_auto.h"
+GtkWidget *mainWindow;
 
+static void exit_data(GtkWidget *widget, GtkWidget *gData) {
+    gtk_widget_destroy(mainWindow);
+}
+static void acercaDe () {
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(window), 600, 800);
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+
+    gtk_widget_show_all(GTK_WIDGET(window));
+}
+static void initGame(GtkWidget *widget, GtkWidget *gData) {
+    GtkWidget *window, *;
+    // gtk_widget_destroy(GTK_WIDGET(mainWindow));
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(window), 600, 800);
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+    g_signal_connect(window, "destroy", G_CALLBACK(exit_data), NULL);
+
+    gtk_widget_show_all(GTK_WIDGET(window));
+    
+}
 // funtion construct
 static void activate (GtkApplication *app, gpointer user_data) {
-
-    GtkWidget *window, *fixed;
-    GtkWidget *button, *button_box, *image;
+    
+    GtkWidget *buttBoxAcer, *buttBoxPlay, *buttBoxHelp, *buttBoxScore, *box;
+    GtkWidget *buttonAcer, *buttonPlay, *buttonHelp, *buttonScore;
     GtkCssProvider *cssProvider;
-    image = gtk_image_new_from_file("./image/Disco.png");
+    // image = gtk_image_new_from_file("./image/Disco.png");
 
     cssProvider = gtk_css_provider_new();
 
     // Create container fixed
-    fixed = gtk_fixed_new();
+    box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 25);
+    gtk_box_set_homogeneous(GTK_BOX(box), TRUE);
+
+    // Create box for buttons
+    buttBoxAcer = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+    buttBoxPlay = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+    buttBoxHelp = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+    buttBoxScore = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+
+    // Create buttons and add at box container
+    buttonAcer = gtk_button_new_with_label("Acerca De");
+    buttonHelp = gtk_button_new_with_label("Ayuda");
+    buttonPlay = gtk_button_new_with_label("Jugar");
+    buttonScore = gtk_button_new_with_label("Historial");
+
+    // Add signals at buttons
+    g_signal_connect(buttonPlay, "clicked", G_CALLBACK(initGame), NULL);
+    g_signal_connect(buttonAcer, "clicked", G_CALLBACK(acercaDe), NULL);
+
+    gtk_container_add(GTK_CONTAINER(buttBoxAcer), buttonAcer);
+    gtk_container_add(GTK_CONTAINER(buttBoxHelp), buttonHelp);
+    gtk_container_add(GTK_CONTAINER(buttBoxPlay), buttonPlay);
+    gtk_container_add(GTK_CONTAINER(buttBoxScore), buttonScore);
+    
+    gtk_container_add(GTK_CONTAINER(box), buttBoxPlay);
+    gtk_container_add(GTK_CONTAINER(box), buttBoxScore);
+    gtk_container_add(GTK_CONTAINER(box), buttBoxHelp);
+    gtk_container_add(GTK_CONTAINER(box), buttBoxAcer);
+
+    gtk_widget_set_size_request(GTK_WIDGET(buttonAcer), 240, 90);
+    gtk_widget_set_size_request(GTK_WIDGET(buttonHelp), 240, 90);
+    gtk_widget_set_size_request(GTK_WIDGET(buttonPlay), 240, 90);
+    gtk_widget_set_size_request(GTK_WIDGET(buttonScore), 240, 90);
+    
+    gtk_style_context_add_class(gtk_widget_get_style_context(buttonAcer), "button");
+    gtk_style_context_add_class(gtk_widget_get_style_context(buttonHelp), "button");
+    gtk_style_context_add_class(gtk_widget_get_style_context(buttonPlay), "button");
+    gtk_style_context_add_class(gtk_widget_get_style_context(buttonScore), "button");
         
     // Set properties for winow
-    window = gtk_application_window_new (app);
-    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-    gtk_window_set_title (GTK_WINDOW (window), "Window");
-    gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
-    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+    mainWindow = gtk_application_window_new (app);
+    gtk_window_set_position(GTK_WINDOW(mainWindow), GTK_WIN_POS_CENTER);
+    gtk_window_set_title (GTK_WINDOW (mainWindow), "Window");
+    gtk_window_set_default_size (GTK_WINDOW (mainWindow), 800, 600);
+    gtk_window_set_resizable(GTK_WINDOW(mainWindow), FALSE);
 
     // Set properties for button and button-box
-    button_box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
-    button = gtk_button_new();
-    gtk_button_set_image(GTK_BUTTON(button), image);
-    gtk_style_context_add_class(gtk_widget_get_style_context(button), "disco");
+    // button_box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
+    // button = gtk_button_new();
+    // gtk_button_set_image(GTK_BUTTON(button), image);
+    // gtk_style_context_add_class(gtk_widget_get_style_context(button), "disco");
     
-    gtk_container_add (GTK_CONTAINER (button_box), button);
-    gtk_fixed_put(GTK_FIXED(fixed), button_box, 1, 10);
+    // gtk_container_add (GTK_CONTAINER (button_box), button);
+    // gtk_fixed_put(GTK_FIXED(fixed), button_box, 1, 10);
 
-    gtk_widget_set_name(GTK_WIDGET(fixed), "box");
+    gtk_widget_set_name(GTK_WIDGET(box), "box");
 
     gtk_css_provider_load_from_path(cssProvider, "./style.css", NULL);
     gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
                                             GTK_STYLE_PROVIDER(cssProvider),
                                             GTK_STYLE_PROVIDER_PRIORITY_USER);
 
-    gtk_container_add(GTK_CONTAINER(window), fixed);
-    gtk_widget_show_all (window);
+    gtk_container_add(GTK_CONTAINER(mainWindow), box);
+    gtk_widget_show_all (mainWindow);
 }
 
 // funtion main
