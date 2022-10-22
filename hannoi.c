@@ -5,14 +5,11 @@
 static void activate (GtkApplication *app, gpointer user_data) {
 
     GtkWidget *window, *fixed;
-    GtkWidget *button, *button_box;
-    GtkWidget *image;
+    GtkWidget *button, *button_box, *image;
+    GtkCssProvider *cssProvider;
+    image = gtk_image_new_from_file("./image/Disco.png");
 
-    // Cerate image
-    image = gtk_image_new_from_file("./image/wallpaperPrincipal.jpg");
-    gtk_image_set_pixel_size(GTK_IMAGE(image), 200);
-    gtk_image_set_from_icon_name(GTK_IMAGE(image), "wallpaper", 100);
-    image = gtk_image_new_from_icon_name("name", GTK_ICON_SIZE_DIALOG);
+    cssProvider = gtk_css_provider_new();
 
     // Create container fixed
     fixed = gtk_fixed_new();
@@ -28,9 +25,17 @@ static void activate (GtkApplication *app, gpointer user_data) {
     button_box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
     button = gtk_button_new();
     gtk_button_set_image(GTK_BUTTON(button), image);
+    gtk_style_context_add_class(gtk_widget_get_style_context(button), "disco");
     
     gtk_container_add (GTK_CONTAINER (button_box), button);
-    gtk_fixed_put(GTK_FIXED(fixed), button_box, 170, 150);
+    gtk_fixed_put(GTK_FIXED(fixed), button_box, 1, 10);
+
+    gtk_widget_set_name(GTK_WIDGET(fixed), "box");
+
+    gtk_css_provider_load_from_path(cssProvider, "./style.css", NULL);
+    gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+                                            GTK_STYLE_PROVIDER(cssProvider),
+                                            GTK_STYLE_PROVIDER_PRIORITY_USER);
 
     gtk_container_add(GTK_CONTAINER(window), fixed);
     gtk_widget_show_all (window);
