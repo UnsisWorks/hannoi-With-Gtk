@@ -7,13 +7,13 @@
     
 }
 .button {
-    background: #00838F;
+    background: rgba(1, 1, 1, 0);
     color: whitesmoke;
     /* box-shadow: 2px 2px 2px 10px rgba(0, 0, 0, 0.2); */
     font-size: 20px;
     transition: all 0.5s;
     border-radius: 10%;
-    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+    box-shadow: rgba(0, 0, 0, 0) 0px 19px 38px, rgba(0, 0, 0, 0) 0px 15px 12px;
 }
 .buttonImage {
     background: rgba(1, 1, 1, 0);

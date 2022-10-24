@@ -11,6 +11,7 @@ struct _resize_widgets {
 };
 typedef struct _resize_widgets ResizeWidgets;
 
+// Thread for timer
 void *timer (void *data) {
     int seconds = 0;
     int minuts = 0;
@@ -24,7 +25,6 @@ void *timer (void *data) {
         sleep(1);
         system("clear");
     }
-    
 }
 
 // Funtion for resize image at window
@@ -72,7 +72,6 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     // Create and start threead for timer
     pthread_t initTimer;
     // pthread_create(&initTimer, NULL, &timer, NULL);
-    // pthread_join(initTimer, NULL);
 
     // Create widgets needed
     GtkWidget *window = NULL;
@@ -105,14 +104,13 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     // Add signals for exit game and resize image bg
     g_signal_connect(window, "destroy", G_CALLBACK(exit_data), NULL);
     g_signal_connect(container, "size-allocate", G_CALLBACK(resize_image), widgets);
-    // g_signal_connect(container, "show", G_CALLBACK(resize_image), widgets);
 
     // Resize window.
     gtk_widget_show_all(GTK_WIDGET(window));
 
 
-    g_object_unref (pixbuf);
-    g_free(widgets);
+    //g_object_unref (pixbuf);
+    //g_free(widgets);
 
     gtk_widget_show_all(GTK_WIDGET(window));
     
@@ -122,14 +120,14 @@ static void activate (GtkApplication *app, gpointer user_data) {
     
     GtkWidget *buttBoxAcer, *buttBoxPlay, *buttBoxHelp, *buttBoxScore, *buttBoxExit, *box;
     GtkWidget *buttonAcer, *buttonPlay, *buttonHelp, *buttonScore, *buttonExit;
-    GtkWidget *imageExit, *imageAcer, *imagePlay, *imageScore;
+    GtkWidget *imageExit, *imageAcer, *imagePlay, *imageScore, *imageSett;
     GtkCssProvider *cssProvider;
-
     // Load images for buttons
     imagePlay = gtk_image_new_from_file("./image/PLAY.png");
     imageScore = gtk_image_new_from_file("./image/SCORE.png");
     imageAcer = gtk_image_new_from_file("./image/CREDITS.png");
     imageExit = gtk_image_new_from_file("./image/EXIT.png");
+    imageSett = gtk_image_new_from_file("./image/SETTINGS.png");
 
     cssProvider = gtk_css_provider_new();
 
@@ -153,7 +151,7 @@ static void activate (GtkApplication *app, gpointer user_data) {
 
     gtk_button_set_image(GTK_BUTTON(buttonPlay), imagePlay);
     gtk_button_set_image(GTK_BUTTON(buttonScore), imageScore);
-    // gtk_button_set_image(GTK_BUTTON(buttonHelp), image);
+    gtk_button_set_image(GTK_BUTTON(buttonHelp), imageSett);
     gtk_button_set_image(GTK_BUTTON(buttonAcer), imageAcer);
     gtk_button_set_image(GTK_BUTTON(buttonExit), imageExit);
 
@@ -163,12 +161,14 @@ static void activate (GtkApplication *app, gpointer user_data) {
     g_signal_connect(buttonAcer, "clicked", G_CALLBACK(acercaDe), NULL);
     g_signal_connect(buttonExit, "clicked", G_CALLBACK(exit_data), NULL);
 
+    // Add buttons  at button box
     gtk_container_add(GTK_CONTAINER(buttBoxAcer), buttonAcer);
     gtk_container_add(GTK_CONTAINER(buttBoxHelp), buttonHelp);
     gtk_container_add(GTK_CONTAINER(buttBoxPlay), buttonPlay);
     gtk_container_add(GTK_CONTAINER(buttBoxScore), buttonScore);
     gtk_container_add(GTK_CONTAINER(buttBoxExit), buttonExit);
     
+    // Add buttons at box
     gtk_container_add(GTK_CONTAINER(box), buttBoxPlay);
     gtk_container_add(GTK_CONTAINER(box), buttBoxScore);
     gtk_container_add(GTK_CONTAINER(box), buttBoxHelp);
