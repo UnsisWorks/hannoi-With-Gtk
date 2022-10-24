@@ -37,13 +37,18 @@
 }
 .button-close {
     color: whitesmoke;
-    background: darkcyan;
+    background: rgb(86, 200, 200);
+    transition: all 1s;
 } 
 .label-close {
     font-size: 18px;
-    font-weight: lighter;
+    font-weight: 900;
     color: red;
 }
+.button-close:hover {
+    color: rgb(86, 200, 200);
+    background: whitesmoke;
+}
 #box-close {
-    background: #f39f03;
+    background: linear-gradient(0deg, whitesmoke, rgb(24, 99, 247));
 }

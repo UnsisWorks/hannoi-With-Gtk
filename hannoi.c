@@ -2,7 +2,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <stdlib.h>
-GtkWidget *mainWindow;
+GtkWidget *mainWindow, *windowClose;
 
 // create struct for resize image
 struct _resize_widgets {
@@ -11,17 +11,25 @@ struct _resize_widgets {
 };
 typedef struct _resize_widgets ResizeWidgets;
 
+void funtionCloseGameYes(GtkWidget *witget, gpointer user_data){
+    exit(-1);
+}
+static void funtionCloseGameNo(GtkWidget *witget, gpointer user_data){
+    gtk_widget_destroy(GTK_WIDGET(windowClose));
+}
+
+// Window the confirm exit game
 static void closeGame() {
-    GtkWidget *window, *fixed, *label, *box;
+    GtkWidget *fixed, *label, *box;
     GtkWidget *buttBoxYes, *buttBoxNo, *buttonYes, *buttonNo;
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     fixed = gtk_fixed_new();
 
     // Create window
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(window), 250, 150);
-    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+    windowClose = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(windowClose), 250, 150);
+    gtk_window_set_resizable(GTK_WINDOW(windowClose), FALSE);
 
     // Create buttos and buttons box
     buttBoxNo = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
@@ -29,10 +37,13 @@ static void closeGame() {
     buttonNo = gtk_button_new_with_label("No");
     buttonYes = gtk_button_new_with_label("Yes");
 
+    g_signal_connect(buttonYes, "clicked", G_CALLBACK(funtionCloseGameYes), NULL);
+    g_signal_connect(buttonNo, "clicked", G_CALLBACK(funtionCloseGameNo), NULL);
+
     // Add buttons at buttons box
     gtk_container_add(GTK_CONTAINER(buttBoxNo), buttonNo);
     gtk_container_add(GTK_CONTAINER(buttBoxYes), buttonYes);
-    gtk_container_add(GTK_CONTAINER(window), box);
+    gtk_container_add(GTK_CONTAINER(windowClose), box);
     label = gtk_label_new("Close Game?");
 
     // Add widgets at window
@@ -48,7 +59,48 @@ static void closeGame() {
     gtk_widget_set_name(GTK_WIDGET(box), "box-close");
     gtk_box_set_center_widget(GTK_BOX(box), fixed);
 
-    gtk_widget_show_all(window);
+    gtk_widget_show_all(windowClose);
+}
+
+// Window the confirm exit game
+static void numberDisc() {
+    GtkWidget *fixed, *label, *box;
+    GtkWidget *comboBox;
+
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+    fixed = gtk_fixed_new();
+
+    // Create window
+    windowClose = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(windowClose), 250, 150);
+    gtk_window_set_resizable(GTK_WINDOW(windowClose), FALSE);
+
+    // Create checkBox for selected number disc
+    comboBox = gtk_combo_box_new();
+
+    g_signal_connect(buttonYes, "clicked", G_CALLBACK(funtionCloseGameYes), NULL);
+    g_signal_connect(buttonNo, "clicked", G_CALLBACK(funtionCloseGameNo), NULL);
+
+    // Add buttons at buttons box
+    gtk_container_add(GTK_CONTAINER(buttBoxNo), buttonNo);
+    gtk_container_add(GTK_CONTAINER(buttBoxYes), buttonYes);
+    gtk_container_add(GTK_CONTAINER(windowClose), box);
+    label = gtk_label_new("Close Game?");
+
+    // Add widgets at window
+    gtk_fixed_put(GTK_FIXED(fixed), label, 90, 30);
+    gtk_fixed_put(GTK_FIXED(fixed), buttBoxNo, 30, 60);
+    gtk_fixed_put(GTK_FIXED(fixed), buttBoxYes, 150, 60);
+
+    // Add class for CSS at widgets
+    gtk_style_context_add_class(gtk_widget_get_style_context(buttonYes), "button-close");
+    gtk_style_context_add_class(gtk_widget_get_style_context(buttonNo), "button-close");
+    gtk_style_context_add_class(gtk_widget_get_style_context(label), "label-close");
+    //gtk_style_context_add_class(gtk_widget_get_style_context(fixed), "");
+    gtk_widget_set_name(GTK_WIDGET(box), "box-close");
+    gtk_box_set_center_widget(GTK_BOX(box), fixed);
+
+    gtk_widget_show_all(windowClose);
 }
 // Thread for timer
 void *timer (void *data) {
@@ -95,9 +147,8 @@ gboolean resize_image(GtkWidget *widget, GdkRectangle *allocation, gpointer user
 
 // Close game
 static void exit_data(GtkWidget *gidget, gpointer user_data) {
-    closeGame();
-    g_print("frferfre\n");
-    //exit(-1);
+    // g_print("frferfre\n");
+    exit(-1);
 }
 static void acercaDe () {
     GtkWidget *window;
@@ -199,7 +250,7 @@ static void activate (GtkApplication *app, gpointer user_data) {
     // Add signals at buttons
     g_signal_connect(buttonPlay, "clicked", G_CALLBACK(initGame), NULL);
     g_signal_connect(buttonAcer, "clicked", G_CALLBACK(acercaDe), NULL);
-    g_signal_connect(buttonExit, "clicked", G_CALLBACK(exit_data), NULL);
+    g_signal_connect(buttonExit, "clicked", G_CALLBACK(closeGame), NULL);
 
     // Add buttons  at button box
     gtk_container_add(GTK_CONTAINER(buttBoxAcer), buttonAcer);
