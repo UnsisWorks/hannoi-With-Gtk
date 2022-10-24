@@ -1,5 +1,7 @@
 #include <gtk/gtk.h>
-//#include "gtk_auto.h"
+#include <pthread.h>
+#include <unistd.h>
+#include <stdlib.h>
 GtkWidget *mainWindow;
 
 // create struct for resize image
@@ -8,6 +10,22 @@ struct _resize_widgets {
    GdkPixbuf *pixbuf;
 };
 typedef struct _resize_widgets ResizeWidgets;
+
+void *timer (void *data) {
+    int seconds = 0;
+    int minuts = 0;
+    while (1) {
+        seconds ++;
+        if (seconds == 60) {
+            seconds = 0;
+            minuts++;
+        }
+        g_print("\n\n\n00:%d:%d", minuts, seconds);
+        sleep(1);
+        system("clear");
+    }
+    
+}
 
 // Funtion for resize image at window
 gboolean resize_image(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data) {
@@ -36,8 +54,10 @@ gboolean resize_image(GtkWidget *widget, GdkRectangle *allocation, gpointer user
    return FALSE;
 }
 
-static void exit_data(GtkWidget *widget, GtkWidget *gData) {
-    gtk_widget_destroy(mainWindow);
+// Close game
+static void exit_data(GtkWidget *gidget, gpointer user_data) {
+    g_print("frferfre\n");
+    exit(-1);
 }
 static void acercaDe () {
     GtkWidget *window;
@@ -48,44 +68,56 @@ static void acercaDe () {
     gtk_widget_show_all(GTK_WIDGET(window));
 }
 static void initGame(GtkWidget *widget, GtkWidget *gData) {
-   GtkWidget *window = NULL;
-   GtkWidget *image = NULL;
-   GtkWidget *container = NULL;
-   GdkPixbuf *pixbuf = NULL;
-   ResizeWidgets *widgets;
 
-   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-   gtk_window_set_default_size(GTK_WINDOW(window), 800, 700);
-   container = gtk_layout_new(NULL, NULL);
-   image = gtk_image_new();
+    // Create and start threead for timer
+    pthread_t initTimer;
+    // pthread_create(&initTimer, NULL, &timer, NULL);
+    // pthread_join(initTimer, NULL);
 
-   pixbuf = gdk_pixbuf_new_from_file ("./image/Interfaz.png", NULL);
-   if (pixbuf == NULL) {
-      g_printerr("Failed to resize image\n");
-   }
+    // Create widgets needed
+    GtkWidget *window = NULL;
+    GtkWidget *image = NULL;
+    GtkWidget *container = NULL;
+    GdkPixbuf *pixbuf = NULL;
+    ResizeWidgets *widgets;
 
-   widgets = g_new0(ResizeWidgets, 1);
-   widgets->image = image;
-   widgets->pixbuf = pixbuf;
+    // Create window
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(window), 1200, 900);
+    container = gtk_layout_new(NULL, NULL);
+    image = gtk_image_new();
 
-   gtk_container_add(GTK_CONTAINER(window), container);
-   gtk_layout_put(GTK_LAYOUT(container), image, 0, 0);
+    // Valid load image
+    pixbuf = gdk_pixbuf_new_from_file ("./image/Interfaz.png", NULL);
+    if (pixbuf == NULL) {
+        g_printerr("Failed to resize image\n");
+    }
 
-   gtk_widget_set_size_request (GTK_WIDGET(window), 20, 20);
+    // set values at struct for resize image
+    widgets = g_new0(ResizeWidgets, 1);
+    widgets->image = image;
+    widgets->pixbuf = pixbuf;
 
-   g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-   g_signal_connect(container, "size-allocate", G_CALLBACK(resize_image), widgets);
+    // Set layaut at window
+    gtk_container_add(GTK_CONTAINER(window), container);
+    gtk_layout_put(GTK_LAYOUT(container), image, 0, 0);
 
-   gtk_widget_show_all(GTK_WIDGET(window));
-
-   gtk_main();
-
-   g_object_unref (pixbuf);
-   g_free(widgets);
-
+    // Add signals for exit game and resize image bg
     g_signal_connect(window, "destroy", G_CALLBACK(exit_data), NULL);
+    g_signal_connect(container, "size-allocate", G_CALLBACK(resize_image), widgets);
+    g_signal_connect(container, "show", G_CALLBACK(resize_image), widgets);
 
+    // Resize window.
     gtk_widget_show_all(GTK_WIDGET(window));
+
+    gtk_main();
+
+    g_object_unref (pixbuf);
+    g_free(widgets);
+
+        // g_signal_connect(window, "destroy", G_CALLBACK(exit_data), NULL);
+
+        gtk_widget_show_all(GTK_WIDGET(window));
     
 }
 // funtion construct
