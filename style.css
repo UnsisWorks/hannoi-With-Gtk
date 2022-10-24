@@ -34,4 +34,16 @@
     background-image: linear-gradient(0deg, #03bb85, #256D7B);
     border-radius: 50%;
     box-shadow: 2px 2px 20px 3px whitesmoke, inset 0 0 14px whitesmoke;
+}
+.button-close {
+    color: whitesmoke;
+    background: darkcyan;
 } 
+.label-close {
+    font-size: 18px;
+    font-weight: lighter;
+    color: red;
+}
+#box-close {
+    background: #f39f03;
+}

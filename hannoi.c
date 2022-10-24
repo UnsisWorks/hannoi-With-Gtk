@@ -11,6 +11,45 @@ struct _resize_widgets {
 };
 typedef struct _resize_widgets ResizeWidgets;
 
+static void closeGame() {
+    GtkWidget *window, *fixed, *label, *box;
+    GtkWidget *buttBoxYes, *buttBoxNo, *buttonYes, *buttonNo;
+
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+    fixed = gtk_fixed_new();
+
+    // Create window
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(window), 250, 150);
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+
+    // Create buttos and buttons box
+    buttBoxNo = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+    buttBoxYes = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+    buttonNo = gtk_button_new_with_label("No");
+    buttonYes = gtk_button_new_with_label("Yes");
+
+    // Add buttons at buttons box
+    gtk_container_add(GTK_CONTAINER(buttBoxNo), buttonNo);
+    gtk_container_add(GTK_CONTAINER(buttBoxYes), buttonYes);
+    gtk_container_add(GTK_CONTAINER(window), box);
+    label = gtk_label_new("Close Game?");
+
+    // Add widgets at window
+    gtk_fixed_put(GTK_FIXED(fixed), label, 90, 30);
+    gtk_fixed_put(GTK_FIXED(fixed), buttBoxNo, 30, 60);
+    gtk_fixed_put(GTK_FIXED(fixed), buttBoxYes, 150, 60);
+
+    // Add class for CSS at widgets
+    gtk_style_context_add_class(gtk_widget_get_style_context(buttonYes), "button-close");
+    gtk_style_context_add_class(gtk_widget_get_style_context(buttonNo), "button-close");
+    gtk_style_context_add_class(gtk_widget_get_style_context(label), "label-close");
+    //gtk_style_context_add_class(gtk_widget_get_style_context(fixed), "");
+    gtk_widget_set_name(GTK_WIDGET(box), "box-close");
+    gtk_box_set_center_widget(GTK_BOX(box), fixed);
+
+    gtk_widget_show_all(window);
+}
 // Thread for timer
 void *timer (void *data) {
     int seconds = 0;
@@ -56,8 +95,9 @@ gboolean resize_image(GtkWidget *widget, GdkRectangle *allocation, gpointer user
 
 // Close game
 static void exit_data(GtkWidget *gidget, gpointer user_data) {
+    closeGame();
     g_print("frferfre\n");
-    exit(-1);
+    //exit(-1);
 }
 static void acercaDe () {
     GtkWidget *window;
