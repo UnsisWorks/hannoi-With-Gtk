@@ -105,19 +105,16 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     // Add signals for exit game and resize image bg
     g_signal_connect(window, "destroy", G_CALLBACK(exit_data), NULL);
     g_signal_connect(container, "size-allocate", G_CALLBACK(resize_image), widgets);
-    g_signal_connect(container, "show", G_CALLBACK(resize_image), widgets);
+    // g_signal_connect(container, "show", G_CALLBACK(resize_image), widgets);
 
     // Resize window.
     gtk_widget_show_all(GTK_WIDGET(window));
 
-    gtk_main();
 
     g_object_unref (pixbuf);
     g_free(widgets);
 
-        // g_signal_connect(window, "destroy", G_CALLBACK(exit_data), NULL);
-
-        gtk_widget_show_all(GTK_WIDGET(window));
+    gtk_widget_show_all(GTK_WIDGET(window));
     
 }
 // funtion construct
@@ -164,6 +161,7 @@ static void activate (GtkApplication *app, gpointer user_data) {
     // Add signals at buttons
     g_signal_connect(buttonPlay, "clicked", G_CALLBACK(initGame), NULL);
     g_signal_connect(buttonAcer, "clicked", G_CALLBACK(acercaDe), NULL);
+    g_signal_connect(buttonExit, "clicked", G_CALLBACK(exit_data), NULL);
 
     gtk_container_add(GTK_CONTAINER(buttBoxAcer), buttonAcer);
     gtk_container_add(GTK_CONTAINER(buttBoxHelp), buttonHelp);
