@@ -2,7 +2,8 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <stdlib.h>
-GtkWidget *mainWindow, *windowClose;
+GtkWidget *mainWindow, *windowClose, *combo;
+gint countDisc = 0;
 
 // create struct for resize image
 struct _resize_widgets {
@@ -65,7 +66,6 @@ static void closeGame() {
 // Window the confirm exit game
 static void numberDisc() {
     GtkWidget *fixed, *label, *box;
-    GtkWidget *comboBox;
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     fixed = gtk_fixed_new();
@@ -76,11 +76,11 @@ static void numberDisc() {
     gtk_window_set_resizable(GTK_WINDOW(windowClose), FALSE);
 
     // Create checkBox for selected number disc
-    comboBox = gtk_combo_box_new();
+    combo = gtk_combo_box_new();
+    
+        gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "1");
 
-    g_signal_connect(buttonYes, "clicked", G_CALLBACK(funtionCloseGameYes), NULL);
-    g_signal_connect(buttonNo, "clicked", G_CALLBACK(funtionCloseGameNo), NULL);
-
+    
     // Add buttons at buttons box
     gtk_container_add(GTK_CONTAINER(buttBoxNo), buttonNo);
     gtk_container_add(GTK_CONTAINER(buttBoxYes), buttonYes);
@@ -162,7 +162,7 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
 
     // Create and start threead for timer
     pthread_t initTimer;
-    // pthread_create(&initTimer, NULL, &timer, NULL);
+    pthread_create(&initTimer, NULL, &timer, NULL);
 
     // Create widgets needed
     GtkWidget *window = NULL;
