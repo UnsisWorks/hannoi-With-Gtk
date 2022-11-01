@@ -65,42 +65,49 @@ static void closeGame() {
 
 // Window the confirm exit game
 static void numberDisc() {
-    GtkWidget *fixed, *label, *box;
+    GtkWidget *fixed, *label, *box, *buttBox, *button, *window;
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     fixed = gtk_fixed_new();
 
     // Create window
-    windowClose = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(windowClose), 250, 150);
-    gtk_window_set_resizable(GTK_WINDOW(windowClose), FALSE);
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(window), 250, 150);
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 
     // Create checkBox for selected number disc
     combo = gtk_combo_box_new();
     
-        gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "1");
+
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "1");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "2");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "3");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "4");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "5");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "6");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "7");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "8");
 
     
     // Add buttons at buttons box
-    gtk_container_add(GTK_CONTAINER(buttBoxNo), buttonNo);
-    gtk_container_add(GTK_CONTAINER(buttBoxYes), buttonYes);
-    gtk_container_add(GTK_CONTAINER(windowClose), box);
+    buttBox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+    button = gtk_button_new_with_label("Aceptar");
+    gtk_container_add(GTK_CONTAINER(buttBox), button);
+    gtk_container_add(GTK_CONTAINER(window), box);
     label = gtk_label_new("Close Game?");
 
     // Add widgets at window
     gtk_fixed_put(GTK_FIXED(fixed), label, 90, 30);
-    gtk_fixed_put(GTK_FIXED(fixed), buttBoxNo, 30, 60);
-    gtk_fixed_put(GTK_FIXED(fixed), buttBoxYes, 150, 60);
+    gtk_fixed_put(GTK_FIXED(fixed), buttBox, 30, 60);
 
     // Add class for CSS at widgets
-    gtk_style_context_add_class(gtk_widget_get_style_context(buttonYes), "button-close");
-    gtk_style_context_add_class(gtk_widget_get_style_context(buttonNo), "button-close");
+    gtk_style_context_add_class(gtk_widget_get_style_context(button), "button-close");
     gtk_style_context_add_class(gtk_widget_get_style_context(label), "label-close");
     //gtk_style_context_add_class(gtk_widget_get_style_context(fixed), "");
     gtk_widget_set_name(GTK_WIDGET(box), "box-close");
     gtk_box_set_center_widget(GTK_BOX(box), fixed);
 
-    gtk_widget_show_all(windowClose);
+    gtk_widget_show_all(window);
 }
 // Thread for timer
 void *timer (void *data) {
@@ -281,18 +288,10 @@ static void activate (GtkApplication *app, gpointer user_data) {
     // Set properties for winow
     mainWindow = gtk_application_window_new (app);
     gtk_window_set_position(GTK_WINDOW(mainWindow), GTK_WIN_POS_CENTER);
-    gtk_window_set_title (GTK_WINDOW (mainWindow), "Window");
+    gtk_window_set_title (GTK_WINDOW (mainWindow), "Torres");
     gtk_window_set_default_size (GTK_WINDOW (mainWindow), 800, 900);
     gtk_window_set_resizable(GTK_WINDOW(mainWindow), FALSE);
 
-    // Set properties for button and button-box
-    // button_box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
-    // button = gtk_button_new();
-    // gtk_button_set_image(GTK_BUTTON(button), image);
-    // gtk_style_context_add_class(gtk_widget_get_style_context(button), "disco");
-    
-    // gtk_container_add (GTK_CONTAINER (button_box), button);
-    // gtk_fixed_put(GTK_FIXED(fixed), button_box, 1, 10);
 
     gtk_widget_set_name(GTK_WIDGET(box), "box");
 
