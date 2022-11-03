@@ -1,16 +1,16 @@
 /*
  * Pila.h
- * Por: Dr. Víctor Alberto Gómez Pérez
+ * Por: Dr. Vï¿½ctor Alberto Gï¿½mez Pï¿½rez
  * Universidad de la Sierra Sur
  */
 #include <stdio.h>
 #define MAX 10
 
 
-typedef struct{
-int arreglo[MAX];
-int tope;
-}Pila;
+typedef struct {
+    int arreglo[MAX];
+    int tope;
+} Pila;
 
 void PilaVacia (Pila *a);
 int EsVacia (Pila *a);

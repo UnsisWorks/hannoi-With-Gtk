@@ -7,13 +7,12 @@
 #include <stdio.h>
 #include "Pila.h"
 
-
 void PilaVacia (Pila *a) {
      a->tope=-1;
 }
      
 int EsVacia (Pila *a) {
-     if (a->tope==-1)
+     if (a -> tope == -1)
           return 1;
      else
           return 0;  
@@ -29,11 +28,10 @@ int Cima (Pila *a) {
 }
 
 
-void Push (int x, Pila *a)
-     { 
+void Push (int x, Pila *a) { 
      if (!EsLlena(a)) {
-          a->tope++;
-          a->arreglo[a->tope]=x; 
+          a -> tope++;
+          a -> arreglo[a->tope] = x; 
      }
       else
           printf("Error de desbordamiento OVERFLOW\n");
@@ -46,14 +44,14 @@ int Pop (Pila *a) {
          return -9999;
      }
      else {
-          aux=a->arreglo[a->tope];
-          a->tope--;
+          aux = a -> arreglo[a->tope];
+          a -> tope--;
           return aux;
      }    
 }
 
 int EsLlena (Pila *a) {
-       if (a->tope==MAX-1)        
+       if (a -> tope == MAX -1)        
           return 1;
        else
            return 0;  
