@@ -63,51 +63,67 @@ static void closeGame() {
     gtk_widget_show_all(windowClose);
 }
 
+/**
+ * It gets the number of discs from the combo box and sets the global variable countDisc to that number
+ * 
+ * @param widget The widget that received the signal.
+ * @param user_data This is a pointer to the data that you want to pass to the callback function.
+ */
+static void selectedNumberCombo(GtkWidget *widget, gpointer user_data) {
+    countDisc = gtk_combo_box_get_active(GTK_COMBO_BOX(combo)) + 1;
+    gtk_widget_destroy(GTK_WIDGET(windowClose));
+    g_print("numero: %d", countDisc);
+}
+
 // Window the confirm exit game
 static void numberDisc() {
-    GtkWidget *fixed, *label, *box, *buttBox, *button, *window;
+    GtkWidget *fixed, *label, *box, *buttBox, *button;
 
     box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     fixed = gtk_fixed_new();
 
     // Create window
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(window), 250, 150);
-    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+    windowClose = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(windowClose), 350, 250);
+    gtk_window_set_position(GTK_WINDOW(windowClose), GTK_WIN_POS_CENTER_ON_PARENT);
+    gtk_window_set_resizable(GTK_WINDOW(windowClose), FALSE);
 
     // Create checkBox for selected number disc
-    combo = gtk_combo_box_new();
-    
+    combo = gtk_combo_box_text_new();
 
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "1");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "2");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "3");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "4");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "5");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "6");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "7");
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX(combo), "8");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t1");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t2");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t3");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t4");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t5");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t6");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t7");
+    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t8");
 
-    
+    gtk_combo_box_set_active(GTK_COMBO_BOX(combo), 0);
+
     // Add buttons at buttons box
+    label = gtk_label_new("Número de discos");
     buttBox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
     button = gtk_button_new_with_label("Aceptar");
     gtk_container_add(GTK_CONTAINER(buttBox), button);
-    gtk_container_add(GTK_CONTAINER(window), box);
-    label = gtk_label_new("Close Game?");
+    gtk_container_add(GTK_CONTAINER(windowClose), box);
+
+    g_signal_connect(button, "clicked", G_CALLBACK(selectedNumberCombo), NULL);
 
     // Add widgets at window
-    gtk_fixed_put(GTK_FIXED(fixed), label, 90, 30);
-    gtk_fixed_put(GTK_FIXED(fixed), buttBox, 30, 60);
+    gtk_fixed_put(GTK_FIXED(fixed), label, 40, 30);
+    gtk_fixed_put(GTK_FIXED(fixed), combo, 100, 90);
+    gtk_fixed_put(GTK_FIXED(fixed), buttBox, 125, 165);
 
     // Add class for CSS at widgets
-    gtk_style_context_add_class(gtk_widget_get_style_context(button), "button-close");
-    gtk_style_context_add_class(gtk_widget_get_style_context(label), "label-close");
+    gtk_style_context_add_class(gtk_widget_get_style_context(button), "button-disc");
+    gtk_style_context_add_class(gtk_widget_get_style_context(label), "label-disc");
     //gtk_style_context_add_class(gtk_widget_get_style_context(fixed), "");
     gtk_widget_set_name(GTK_WIDGET(box), "box-close");
     gtk_box_set_center_widget(GTK_BOX(box), fixed);
 
-    gtk_widget_show_all(window);
+    gtk_widget_show_all(windowClose);
 }
 // Thread for timer
 void *timer (void *data) {
@@ -154,8 +170,6 @@ gboolean resize_image(GtkWidget *widget, GdkRectangle *allocation, gpointer user
 
 // Close game
 static void exit_data(GtkWidget *gidget, gpointer user_data) {
-    // g_print("frferfre\n");
-    exit(-1);
 }
 static void acercaDe () {
     GtkWidget *window;
@@ -166,10 +180,10 @@ static void acercaDe () {
     gtk_widget_show_all(GTK_WIDGET(window));
 }
 static void initGame(GtkWidget *widget, GtkWidget *gData) {
-
+    gtk_widget_set_visible(GTK_WIDGET(mainWindow), FALSE);
     // Create and start threead for timer
     pthread_t initTimer;
-    pthread_create(&initTimer, NULL, &timer, NULL);
+    // pthread_create(&initTimer, NULL, &timer, NULL);
 
     // Create widgets needed
     GtkWidget *window = NULL;
@@ -200,17 +214,14 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     gtk_layout_put(GTK_LAYOUT(container), image, 0, 0);
 
     // Add signals for exit game and resize image bg
-    g_signal_connect(window, "destroy", G_CALLBACK(exit_data), NULL);
+    g_signal_connect(window, "destroyed", G_CALLBACK(closeGame), NULL);
     g_signal_connect(container, "size-allocate", G_CALLBACK(resize_image), widgets);
 
     // Resize window.
     gtk_widget_show_all(GTK_WIDGET(window));
 
-
-    //g_object_unref (pixbuf);
-    //g_free(widgets);
-
     gtk_widget_show_all(GTK_WIDGET(window));
+    numberDisc();
     
 }
 // funtion construct

@@ -52,3 +52,22 @@
 #box-close {
     background: linear-gradient(0deg, whitesmoke, rgb(24, 99, 247));
 }
+/* Styles for window selected number dics */
+.button-disc {
+    color: whitesmoke;
+    background: darkcyan;
+    transition: all 1s;
+}
+.button-disc:hover {
+    color: darkcyan;
+    background: whitesmoke;
+    font-weight: 800;
+}
+.label-disc {
+    font-size: 22px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: rgb(37, 36, 36);
+    text-decoration: solid;
+}
