@@ -224,7 +224,40 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     numberDisc();
     
 }
-// funtion construct
+
+// Window for show table score
+static void windowScore (GtkWidget *widget, gpointer user_data) {
+    GtkWidget *window, *box, *table;
+    GtkWidget *label;
+
+    gtk_widget_set_visible(GTK_WIDGET(mainWindow), FALSE);
+
+    box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 20);
+    table = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 20);
+    // gtk_box_set_homogeneous(GTK_BOX(box), TRUE);
+
+    // Create labels for container table
+    label = gtk_label_new("LABEEEEEEEEEL");
+
+
+    // Create window for 
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(window), 500, 600);
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ON_PARENT);
+    gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+
+    // Set selectors 
+    gtk_style_context_add_class(gtk_widget_get_style_context(table), "table-score");
+    gtk_widget_set_name(GTK_WIDGET(box), "box-score");
+    
+    gtk_box_set_center_widget(GTK_BOX(box), table);
+    gtk_container_add(GTK_CONTAINER(table), label);
+    gtk_container_add(GTK_CONTAINER(window), box);
+
+    gtk_widget_show_all(window);
+}
+
+// funtion main construct
 static void activate (GtkApplication *app, gpointer user_data) {
     
     GtkWidget *buttBoxAcer, *buttBoxPlay, *buttBoxHelp, *buttBoxScore, *buttBoxExit, *box;
@@ -241,7 +274,7 @@ static void activate (GtkApplication *app, gpointer user_data) {
     cssProvider = gtk_css_provider_new();
 
     // Create container fixed
-    box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 45);
+    box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_set_homogeneous(GTK_BOX(box), TRUE);
 
     // Create box for buttons
@@ -268,7 +301,7 @@ static void activate (GtkApplication *app, gpointer user_data) {
     // Add signals at buttons
     g_signal_connect(buttonPlay, "clicked", G_CALLBACK(initGame), NULL);
     g_signal_connect(buttonAcer, "clicked", G_CALLBACK(acercaDe), NULL);
-    g_signal_connect(buttonExit, "clicked", G_CALLBACK(closeGame), NULL);
+    g_signal_connect(buttonScore, "clicked", G_CALLBACK(windowScore), NULL);
 
     // Add buttons  at button box
     gtk_container_add(GTK_CONTAINER(buttBoxAcer), buttonAcer);
@@ -300,7 +333,7 @@ static void activate (GtkApplication *app, gpointer user_data) {
     mainWindow = gtk_application_window_new (app);
     gtk_window_set_position(GTK_WINDOW(mainWindow), GTK_WIN_POS_CENTER);
     gtk_window_set_title (GTK_WINDOW (mainWindow), "Torres");
-    gtk_window_set_default_size (GTK_WINDOW (mainWindow), 800, 900);
+    gtk_window_set_default_size (GTK_WINDOW (mainWindow), 650, 850);
     gtk_window_set_resizable(GTK_WINDOW(mainWindow), FALSE);
 
 

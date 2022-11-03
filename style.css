@@ -71,3 +71,15 @@
     color: rgb(37, 36, 36);
     text-decoration: solid;
 }
+/* Style for widow the table score */
+#box-score {
+    background: rgb(0, 0, 0);
+    border-color: rgb(185, 255, 237);
+    border-width: 3px;
+
+}
+.table-score {
+    background: rgb(49, 0, 139);
+    border-color: rgb(185, 255, 237);
+    border-width: 30px;
+}
