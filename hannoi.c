@@ -264,7 +264,7 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     image = gtk_image_new();
 
     // Valid load image
-    pixbuf = gdk_pixbuf_new_from_file ("./image/Interfaz.png", NULL);
+    pixbuf = gdk_pixbuf_new_from_file ("./image/interfaz.png", NULL);
     if (pixbuf == NULL) {
         g_printerr("Failed to resize image\n");
     }
