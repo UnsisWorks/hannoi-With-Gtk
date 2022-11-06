@@ -9,6 +9,7 @@ gint countDisc = 0;
 Pila torreA;
 Pila torreB;
 Pila torreC;
+GtkWidget *container = NULL;
 
 GtkWidget *buttons[MAXI];
 GtkWidget *buttonsBox[MAXI];
@@ -22,37 +23,165 @@ struct _resize_widgets {
 };
 typedef struct _resize_widgets ResizeWidgets;
 
+const gint Sensitivity = 1;
 
-static void create_pila(){
+const gint EvMask = GDK_BUTTON_PRESS_MASK | GDK_BUTTON1_MOTION_MASK;
 
-    imagesButtons[0]=gtk_image_new_from_file("./image/discos/Disco8");
-    imagesButtons[1]=gtk_image_new_from_file("./image/discos/Disco7");
-    imagesButtons[2]=gtk_image_new_from_file("./image/discos/Disco6");
-    imagesButtons[3]=gtk_image_new_from_file("./image/discos/Disco5");
-    imagesButtons[4]=gtk_image_new_from_file("./image/discos/Disco4");
-    imagesButtons[5]=gtk_image_new_from_file("./image/discos/Disco3");
-    imagesButtons[6]=gtk_image_new_from_file("./image/discos/Disco2");
-    imagesButtons[7]=gtk_image_new_from_file("./image/discos/Disco1");
-    PilaVacia(&torreA);
-    int id;
+int offsetx, offsety, px, py, maxx, maxy;
+
+inline static int Min(const int a, const int b) { return b < a ? b : a; }
+inline static int Max(const int a, const int b) { return b > a ? b : a; }
+
+inline static int RoundDownToMultiple(const int i, const int m)
+{
+	return i/m*m;
+}
+inline static int RoundToNearestMultiple(const int i, const int m)
+{
+	if (i % m > (double)m / 2.0d)
+		return (i/m+1)*m;
+	return i/m*m;
+}
+
+static void destroy( GtkWidget *widget, gpointer   data ) { gtk_main_quit (); }
+
+static gboolean button_press_event( GtkWidget *w, GdkEventButton *event )
+{
+	if (event->button == 1) {
+		GtkWidget* p = gtk_widget_get_parent(w);
+		// offset == distance of parent widget from edge of screen ...
+		gdk_window_get_position(gtk_widget_get_window(p), &offsetx, &offsety);
+		// plus distance from pointer to edge of widget
+		offsetx += (int)event->x;
+		offsety += (int)event->y;
+		// maxx, maxy both relative to the parent
+		// note that we're rounding down now so that these max values don't get
+		// rounded upward later and push the widget off the edge of its parent.
+		maxx = RoundDownToMultiple(gtk_widget_get_allocated_width(p) - gtk_widget_get_allocated_width(w), Sensitivity);
+		maxy = RoundDownToMultiple(gtk_widget_get_allocated_height(p) - gtk_widget_get_allocated_height(w), Sensitivity);
+	}
+	return TRUE;
+}
+
+static gboolean motion_notify_event( GtkWidget *widget, GdkEventMotion *event )
+{
+	// x_root,x_root relative to screen
+	// x,y relative to parent (fixed widget)
+	// px,py stores previous values of x,y
+
+	// get starting values for x,y
+	int x = (int)event->x_root - offsetx;
+	int y = (int)event->y_root - offsety;
+	// make sure the potential coordinates x,y:
+	//   1) will not push any part of the widget outside of its parent container
+	//   2) is a multiple of Sensitivity
+	x = RoundToNearestMultiple(Max(Min(x, maxx), 0), Sensitivity);
+	y = RoundToNearestMultiple(Max(Min(y, maxy), 0), Sensitivity);
+	if (x != px || y != py) {
+		px = x;
+		py = y;
+		gtk_layout_move(GTK_LAYOUT(container), widget, x, y);
+	}
+	return TRUE;
+}
+
+
+
+/**
+ * It creates a button, sets the image, adds the event mask, and connects the button_press_event and
+ * motion_notify_event signals to the appropriate functions
+ * 
+ * @param i the index of the button in the array of images
+ * 
+ * @return A pointer to a GtkWidget.
+ */
+GtkWidget* make_button(int i) {
+	GtkWidget* b = gtk_button_new();
+    gtk_button_set_image(GTK_BUTTON(b), imagesButtons[i]);
+	gtk_widget_add_events(b, EvMask);
+	g_signal_connect(b, "button_press_event", G_CALLBACK(button_press_event), NULL);
+	g_signal_connect(b, "motion_notify_event",G_CALLBACK(motion_notify_event), NULL);
+	gtk_widget_show(b);
+	return b;
+}
+
+
+
+/**
+ * It creates a button with an image of a stick and then creates a buttonbox with the stick button and
+ * then creates a for loop that creates a buttonbox for each disc and then puts the buttonbox in the
+ * container
+ */
+static void showtower(){
+    GtkWidget *stick = gtk_image_new_from_file("./image/discos/Palo.png");
+    GtkWidget *buttonstick = gtk_button_new();
+    gtk_button_set_image(GTK_BUTTON(buttonstick),stick);
+    GtkWidget *buttonbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+    gtk_container_add(GTK_CONTAINER(buttonbox), buttonstick);
+    gtk_style_context_add_class(gtk_widget_get_style_context(buttonbox), "container-button-disc");
+
+    gtk_layout_put(GTK_LAYOUT(container), buttonbox, 200, 150);
+    
+    int y=350;
+    int x = 170;
+    int send = 0;
     for (int i = 0; i < countDisc; i++)
     {
+        gtk_layout_put(GTK_LAYOUT(container), buttonsBox[i], x, y);
+        y -= 50;
+        x += (40 - send);
+        send += 2;
+    }
+    //gtk_container_add(GTK_CONTAINER(container), fixed);
+    gtk_widget_show_all(container);
+    
+}
+
+
+
+/**
+ * It creates a stack with the number of discs that the user has chosen, and then it creates a button
+ * for each disc, and then it shows the tower
+ */
+static void create_pila(){
+    PilaVacia(&torreA);
+
+    imagesButtons[0]=gtk_image_new_from_file("./image/discos/Disco8.png");
+    imagesButtons[1]=gtk_image_new_from_file("./image/discos/Disco7.png");
+    imagesButtons[2]=gtk_image_new_from_file("./image/discos/Disco6.png");
+    imagesButtons[3]=gtk_image_new_from_file("./image/discos/Disco5.png");
+    imagesButtons[4]=gtk_image_new_from_file("./image/discos/Disco4.png");
+    imagesButtons[5]=gtk_image_new_from_file("./image/discos/Disco3.png");
+    imagesButtons[6]=gtk_image_new_from_file("./image/discos/Disco2.png");
+    imagesButtons[7]=gtk_image_new_from_file("./image/discos/Disco1.png");
+
+    if (imagesButtons[0]== NULL)
+    {
+        puts("VACIOOOO");
+    }
+    
+
+    int id;
+    for (int i = 0; i < countDisc; i++) {
         id=i;
         Push(id, &torreA);
+        idButtons[i] = i;
     }
     for (int i = 0; i < id; i++)
     {
-        buttons[i]=gtk_button_new();
-        gtk_button_set_image(GTK_BUTTON(buttons[i]),imagesButtons[i]); 
+        buttons[i]=make_button(i);
+        //gtk_button_set_image(GTK_BUTTON(buttons[i]),imagesButtons[i]); 
         buttonsBox[i]= gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
         gtk_container_add(GTK_CONTAINER(buttonsBox[i]),buttons[i]);
 
         // Set Class at buttons for reference int css
         gtk_style_context_add_class(gtk_widget_get_style_context(buttons[i]), "button-disc");
+        gtk_style_context_add_class(gtk_widget_get_style_context(buttonsBox[i]), "container-button-disc");
 
 
     } 
-
+    
+    showtower();
 }
 
 void funtionCloseGameYes(GtkWidget *witget, gpointer user_data){
@@ -61,6 +190,8 @@ void funtionCloseGameYes(GtkWidget *witget, gpointer user_data){
 static void funtionCloseGameNo(GtkWidget *witget, gpointer user_data){
     gtk_widget_destroy(GTK_WIDGET(windowClose));
 }
+
+
 
 // Window the confirm exit game
 static void closeGame() {
@@ -106,6 +237,8 @@ static void closeGame() {
     gtk_widget_show_all(windowClose);
 }
 
+
+
 /**
  * It gets the number of discs from the combo box and sets the global variable countDisc to that number
  * 
@@ -113,14 +246,19 @@ static void closeGame() {
  * @param user_data This is a pointer to the data that you want to pass to the callback function.
  */
 static void selectedNumberCombo(GtkWidget *widget, gpointer user_data) {
-    countDisc = gtk_combo_box_get_active(GTK_COMBO_BOX(combo)) + 1;
+    countDisc = gtk_combo_box_get_active(GTK_COMBO_BOX(combo)) + 2;
     gtk_widget_destroy(GTK_WIDGET(windowClose));
     g_print("numero: %d", countDisc);
     create_pila();
 
 }
 
-// Window the confirm exit game
+
+
+/**
+ * It creates a window with a combo box that allows the user to select the number of discs to be used
+ * in the game
+ */
 static void numberDisc() {
     GtkWidget *fixed, *label, *box, *buttBox, *button;
 
@@ -162,7 +300,7 @@ static void numberDisc() {
     gtk_fixed_put(GTK_FIXED(fixed), buttBox, 125, 165);
 
     // Add class for CSS at widgets
-    gtk_style_context_add_class(gtk_widget_get_style_context(button), "button-disc");
+    gtk_style_context_add_class(gtk_widget_get_style_context(button), "button-num-disc");
     gtk_style_context_add_class(gtk_widget_get_style_context(label), "label-disc");
     //gtk_style_context_add_class(gtk_widget_get_style_context(fixed), "");
     gtk_widget_set_name(GTK_WIDGET(box), "box-close");
@@ -170,7 +308,14 @@ static void numberDisc() {
 
     gtk_widget_show_all(windowClose);
 }
-// Thread for timer
+
+
+
+/**
+ * It prints the time in the format of 00:00:00, and it does it every second
+ * 
+ * @param data This is the data that is passed to the thread.
+ */
 void *timer (void *data) {
     int seconds = 0;
     int minuts = 0;
@@ -186,7 +331,17 @@ void *timer (void *data) {
     }
 }
 
-// Funtion for resize image at window
+
+
+/**
+ * It takes a pixbuf, scales it to fit the height of the widget, and then centers it horizontally
+ * 
+ * @param widget The widget that is being resized.
+ * @param allocation The new size of the widget.
+ * @param user_data a pointer to a ResizeWidgets structure.
+ * 
+ * @return FALSE
+ */
 gboolean resize_image(GtkWidget *widget, GdkRectangle *allocation, gpointer user_data) {
    int x,y,w,h;
    GdkPixbuf *pxbscaled;
@@ -213,7 +368,14 @@ gboolean resize_image(GtkWidget *widget, GdkRectangle *allocation, gpointer user
    return FALSE;
 }
 
-// Close game
+
+
+/**
+ * It creates a new window, sets its size, and makes it unresizable
+ * 
+ * @param gidget The widget that received the signal.
+ * @param user_data This is a pointer to the data that you passed to g_signal_connect().
+ */
 static void exit_data(GtkWidget *gidget, gpointer user_data) {
 }
 static void acercaDe () {
@@ -225,25 +387,17 @@ static void acercaDe () {
     gtk_widget_show_all(GTK_WIDGET(window));
 }
 
-static void showtower(GtkWidget *container){
-    GtkWidget *stick = gtk_image_new_from_file("./image/discos/Palo.png");
-    GtkWidget *buttonstick = gtk_button_new();
-    gtk_button_set_image(GTK_BUTTON(buttonstick),stick);
-    GtkWidget *buttonbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
-    gtk_container_add(GTK_CONTAINER(buttonbox), buttonstick);
-    GtkWidget *fixed=gtk_fixed_new();
-    gtk_fixed_put(GTK_FIXED(fixed), buttonbox, 150, 50);
-    int y=550;
-    for (int i = 0; i < countDisc; i++)
-    {
-        gtk_fixed_put(GTK_FIXED(fixed), buttonsBox[i], 150, y);
-        y-=50;
-    }
-    gtk_container_add(GTK_CONTAINER(container), fixed);
 
-    
-}
 
+/**
+ * It creates a new window, sets the size, creates a layout, creates an image, loads the image, creates
+ * a struct to hold the image and the pixbuf, adds the layout to the window, adds the image to the
+ * layout, adds a signal to destroy the window, adds a signal to resize the image, and then shows the
+ * window
+ * 
+ * @param widget The widget that received the signal.
+ * @param gData This is the data that was passed to the callback function.
+ */
 static void initGame(GtkWidget *widget, GtkWidget *gData) {
     gtk_widget_set_visible(GTK_WIDGET(mainWindow), FALSE);
     // Create and start threead for timer
@@ -253,7 +407,7 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     // Create widgets needed
     GtkWidget *window = NULL;
     GtkWidget *image = NULL;
-    GtkWidget *container = NULL;
+    
     GdkPixbuf *pixbuf = NULL;
     ResizeWidgets *widgets;
 
@@ -279,7 +433,7 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     gtk_layout_put(GTK_LAYOUT(container), image, 0, 0);
 
     // Add signals for exit game and resize image bg
-    g_signal_connect(window, "destroyed", G_CALLBACK(closeGame), NULL);
+    g_signal_connect(window, "destroy", G_CALLBACK(closeGame), NULL);
     g_signal_connect(container, "size-allocate", G_CALLBACK(resize_image), widgets);
 
     // Resize window.
@@ -290,7 +444,14 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     
 }
 
-// Window for show table score
+
+
+/**
+ * > This function creates a new window with a table inside a box inside a window
+ * 
+ * @param widget The widget that received the signal.
+ * @param user_data This is a pointer to the data that you want to pass to the callback function.
+ */
 static void windowScore (GtkWidget *widget, gpointer user_data) {
     GtkWidget *window, *box, *table;
     GtkWidget *label;
@@ -322,7 +483,14 @@ static void windowScore (GtkWidget *widget, gpointer user_data) {
     gtk_widget_show_all(window);
 }
 
-// funtion main construct
+
+
+/**
+ * It creates a window with a vertical box, which contains 5 buttons
+ * 
+ * @param app The GtkApplication instance.
+ * @param user_data This is a pointer to any data you want to pass to the callback function.
+ */
 static void activate (GtkApplication *app, gpointer user_data) {
     
     GtkWidget *buttBoxAcer, *buttBoxPlay, *buttBoxHelp, *buttBoxScore, *buttBoxExit, *box;
