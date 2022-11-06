@@ -51,12 +51,9 @@ static void create_pila(){
         gtk_style_context_add_class(gtk_widget_get_style_context(buttons[i]), "button-disc");
 
 
-    }
-    
+    } 
 
 }
-
-
 
 void funtionCloseGameYes(GtkWidget *witget, gpointer user_data){
     exit(-1);
