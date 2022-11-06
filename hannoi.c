@@ -1,7 +1,10 @@
 #include <gtk/gtk.h>
 #include <pthread.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <mysql.h>
+
 GtkWidget *mainWindow, *windowClose, *combo;
 gint countDisc = 0;
 
@@ -11,6 +14,47 @@ struct _resize_widgets {
    GdkPixbuf *pixbuf;
 };
 typedef struct _resize_widgets ResizeWidgets;
+
+
+//Funtion connection base data zury
+static void connection() {
+MYSQL *con;
+MYSQL_RES *res;
+MYSQL_ROW row;
+
+char *server = "127.0.0.1";
+char *user = "unsis";
+char *pass = "CETI";
+char *database = "zury";
+
+
+    //conexion
+
+    con = mysql_init(NULL);
+    if(!mysql_real_connect(con, server, user, pass, database, 3306, NULL, 0)){
+
+        fprintf(stderr, "%s ERROR \n", mysql_error(con));
+    }
+
+
+    //comandos:
+
+    if(mysql_query(con, "show tables")){
+        fprintf(stderr, "%s\n", mysql_error(con) );
+        exit(1);
+
+    }
+
+    res = mysql_use_result(con);
+    printf("las tablas son:\n");
+    while((row = mysql_fetch_row(res)) != NULL)
+        printf("%s\n", row[0]);
+
+    //Cerramosconxion
+    mysql_free_result(res);
+    mysql_close(con);
+
+}
 
 void funtionCloseGameYes(GtkWidget *witget, gpointer user_data){
     exit(-1);
@@ -237,9 +281,9 @@ static void windowScore (GtkWidget *widget, gpointer user_data) {
     // gtk_box_set_homogeneous(GTK_BOX(box), TRUE);
 
     // Create labels for container table
-    label = gtk_label_new();
+    //nlabel = gtk_label_new();
     image = gtk_image_new_from_file("./image/table.jpg");
-    button = gtk
+
     
     // Create window for 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -364,4 +408,6 @@ int main (int argc, char **argv) {
     return status;
 }
 
+
 // Compiler gcc `pkg-config --cflags gtk+-3.0` -o hannoi hannoi.c `pkg-config --libs gtk+-3.0`
+// sudo apt install libmysqlclient-dev
