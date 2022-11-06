@@ -15,7 +15,6 @@ GtkWidget *buttonsBox[MAXI];
 GtkWidget *imagesButtons[MAXI];
 
 int idButtons[MAXI];
-
 // create struct for resize image
 struct _resize_widgets {
    GtkWidget *image;
@@ -234,7 +233,16 @@ static void showtower(GtkWidget *container){
     GtkWidget *buttonstick = gtk_button_new();
     gtk_button_set_image(GTK_BUTTON(buttonstick),stick);
     GtkWidget *buttonbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
-
+    gtk_container_add(GTK_CONTAINER(buttonbox), buttonstick);
+    GtkWidget *fixed=gtk_fixed_new();
+    gtk_fixed_put(GTK_FIXED(fixed), buttonbox, 150, 50);
+    int y=550;
+    for (int i = 0; i < countDisc; i++)
+    {
+        gtk_fixed_put(GTK_FIXED(fixed), buttonsBox[i], 150, y);
+        y-=50;
+    }
+    gtk_container_add(GTK_CONTAINER(container), fixed);
 
     
 }
