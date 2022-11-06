@@ -9,11 +9,7 @@ gint countDisc = 0;
 Pila torreA;
 Pila torreB;
 Pila torreC;
-   GtkWidget *buttonAcer;
-    GtkWidget *buttonHelp; 
-    GtkWidget *buttonPlay; 
-    GtkWidget *buttonScore; 
-    GtkWidget *buttonExit; 
+
 GtkWidget *buttons[MAXI];
 GtkWidget *buttonsBox[MAXI];
 GtkWidget *imagesButtons[MAXI];
@@ -314,6 +310,7 @@ static void windowScore (GtkWidget *widget, gpointer user_data) {
 static void activate (GtkApplication *app, gpointer user_data) {
     
     GtkWidget *buttBoxAcer, *buttBoxPlay, *buttBoxHelp, *buttBoxScore, *buttBoxExit, *box;
+    GtkWidget *buttonAcer, *buttonPlay, *buttonHelp, *buttonScore, *buttonExit;
     GtkWidget *imageExit, *imageAcer, *imagePlay, *imageScore, *imageSett;
     GtkCssProvider *cssProvider;
     // Load images for buttons
