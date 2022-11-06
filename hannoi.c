@@ -228,6 +228,17 @@ static void acercaDe () {
 
     gtk_widget_show_all(GTK_WIDGET(window));
 }
+
+static void showtower(GtkWidget *container){
+    GtkWidget *stick = gtk_image_new_from_file("./image/discos/Palo.png");
+    GtkWidget *buttonstick = gtk_button_new();
+    gtk_button_set_image(GTK_BUTTON(buttonstick),stick);
+    GtkWidget *buttonbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+
+
+    
+}
+
 static void initGame(GtkWidget *widget, GtkWidget *gData) {
     gtk_widget_set_visible(GTK_WIDGET(mainWindow), FALSE);
     // Create and start threead for timer
