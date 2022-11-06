@@ -2,8 +2,23 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include "Pila.c"
 GtkWidget *mainWindow, *windowClose, *combo;
+//Create global variables
 gint countDisc = 0;
+Pila torreA;
+Pila torreB;
+Pila torreC;
+   GtkWidget *buttonAcer;
+    GtkWidget *buttonHelp; 
+    GtkWidget *buttonPlay; 
+    GtkWidget *buttonScore; 
+    GtkWidget *buttonExit; 
+GtkWidget *buttons[MAXI];
+GtkWidget *buttonsBox[MAXI];
+GtkWidget *imagesButtons[MAXI];
+
+int idButtons[MAXI];
 
 // create struct for resize image
 struct _resize_widgets {
@@ -11,6 +26,42 @@ struct _resize_widgets {
    GdkPixbuf *pixbuf;
 };
 typedef struct _resize_widgets ResizeWidgets;
+
+
+static void create_pila(){
+
+    imagesButtons[0]=gtk_image_new_from_file("./image/discos/Disco8");
+    imagesButtons[1]=gtk_image_new_from_file("./image/discos/Disco7");
+    imagesButtons[2]=gtk_image_new_from_file("./image/discos/Disco6");
+    imagesButtons[3]=gtk_image_new_from_file("./image/discos/Disco5");
+    imagesButtons[4]=gtk_image_new_from_file("./image/discos/Disco4");
+    imagesButtons[5]=gtk_image_new_from_file("./image/discos/Disco3");
+    imagesButtons[6]=gtk_image_new_from_file("./image/discos/Disco2");
+    imagesButtons[7]=gtk_image_new_from_file("./image/discos/Disco1");
+    PilaVacia(&torreA);
+    int id;
+    for (int i = 0; i < countDisc; i++)
+    {
+        id=i;
+        Push(id, &torreA);
+    }
+    for (int i = 0; i < id; i++)
+    {
+        buttons[i]=gtk_button_new();
+        gtk_button_set_image(GTK_BUTTON(buttons[i]),imagesButtons[i]); 
+        buttonsBox[i]= gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+        gtk_container_add(GTK_CONTAINER(buttonsBox[i]),buttons[i]);
+
+        // Set Class at buttons for reference int css
+        gtk_style_context_add_class(gtk_widget_get_style_context(buttons[i]), "button-disc");
+
+
+    }
+    
+
+}
+
+
 
 void funtionCloseGameYes(GtkWidget *witget, gpointer user_data){
     exit(-1);
@@ -73,6 +124,8 @@ static void selectedNumberCombo(GtkWidget *widget, gpointer user_data) {
     countDisc = gtk_combo_box_get_active(GTK_COMBO_BOX(combo)) + 1;
     gtk_widget_destroy(GTK_WIDGET(windowClose));
     g_print("numero: %d", countDisc);
+    create_pila();
+
 }
 
 // Window the confirm exit game
@@ -261,7 +314,6 @@ static void windowScore (GtkWidget *widget, gpointer user_data) {
 static void activate (GtkApplication *app, gpointer user_data) {
     
     GtkWidget *buttBoxAcer, *buttBoxPlay, *buttBoxHelp, *buttBoxScore, *buttBoxExit, *box;
-    GtkWidget *buttonAcer, *buttonPlay, *buttonHelp, *buttonScore, *buttonExit;
     GtkWidget *imageExit, *imageAcer, *imagePlay, *imageScore, *imageSett;
     GtkCssProvider *cssProvider;
     // Load images for buttons
@@ -332,7 +384,7 @@ static void activate (GtkApplication *app, gpointer user_data) {
     // Set properties for winow
     mainWindow = gtk_application_window_new (app);
     gtk_window_set_position(GTK_WINDOW(mainWindow), GTK_WIN_POS_CENTER);
-    gtk_window_set_title (GTK_WINDOW (mainWindow), "Torres");
+    gtk_window_set_title (GTK_WINDOW (mainWindow), "torreAs");
     gtk_window_set_default_size (GTK_WINDOW (mainWindow), 650, 850);
     gtk_window_set_resizable(GTK_WINDOW(mainWindow), FALSE);
 

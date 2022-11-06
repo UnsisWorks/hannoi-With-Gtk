@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
    gtk_window_set_default_size(GTK_WINDOW(window), 800, 700);
    container = gtk_layout_new(NULL, NULL);
-   image = gtk_image_new();
+   image =gtk_image_new();
 
    pixbuf = gdk_pixbuf_new_from_file ("./image/wallpaperPrincipal.jpg", NULL);
    if (pixbuf == NULL) {
@@ -74,4 +74,5 @@ int main(int argc, char **argv) {
    g_free(widgets);
 
    return 0;
+
 }

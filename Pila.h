@@ -4,11 +4,11 @@
  * Universidad de la Sierra Sur
  */
 #include <stdio.h>
-#define MAX 10
+#include <gtk/gtk.h>
 
-
+#define MAXI 8
 typedef struct {
-    int arreglo[MAX];
+    int arreglo[MAXI];
     int tope;
 } Pila;
 
