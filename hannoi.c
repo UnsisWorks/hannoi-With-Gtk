@@ -227,8 +227,8 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
 
 // Window for show table score
 static void windowScore (GtkWidget *widget, gpointer user_data) {
-    GtkWidget *window, *box, *table;
-    GtkWidget *label;
+    GtkWidget *window, *box, *table, *image, *button;
+    GtkWidget *label;  
 
     gtk_widget_set_visible(GTK_WIDGET(mainWindow), FALSE);
 
@@ -237,12 +237,13 @@ static void windowScore (GtkWidget *widget, gpointer user_data) {
     // gtk_box_set_homogeneous(GTK_BOX(box), TRUE);
 
     // Create labels for container table
-    label = gtk_label_new("LABEEEEEEEEEL");
-
-
+    label = gtk_label_new();
+    image = gtk_image_new_from_file("./image/table.jpg");
+    button = gtk
+    
     // Create window for 
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(window), 500, 600);
+    gtk_window_set_default_size(GTK_WINDOW(window), 850, 850);
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ON_PARENT);
     gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 
@@ -250,8 +251,11 @@ static void windowScore (GtkWidget *widget, gpointer user_data) {
     gtk_style_context_add_class(gtk_widget_get_style_context(table), "table-score");
     gtk_widget_set_name(GTK_WIDGET(box), "box-score");
     
-    gtk_box_set_center_widget(GTK_BOX(box), table);
-    gtk_container_add(GTK_CONTAINER(table), label);
+    // gtk_box_set_center_widget(GTK_BOX(box), table);
+    // gtk_container_add(GTK_CONTAINER(table), label);
+    // gtk_container_add(GTK_CONTAINER(table), image);
+    // gtk_container_add(GTK_CONTAINER(box), table);
+    gtk_box_set_center_widget(GTK_BOX(box), image);
     gtk_container_add(GTK_CONTAINER(window), box);
 
     gtk_widget_show_all(window);
