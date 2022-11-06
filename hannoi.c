@@ -15,7 +15,6 @@ GtkWidget *buttonsBox[MAXI];
 GtkWidget *imagesButtons[MAXI];
 
 int idButtons[MAXI];
-
 // create struct for resize image
 struct _resize_widgets {
    GtkWidget *image;
@@ -229,12 +228,21 @@ static void acercaDe () {
     gtk_widget_show_all(GTK_WIDGET(window));
 }
 
-static void showtower(GtkWidget *container){
+static void showTower(GtkWidget *container){
     GtkWidget *stick = gtk_image_new_from_file("./image/discos/Palo.png");
     GtkWidget *buttonstick = gtk_button_new();
     gtk_button_set_image(GTK_BUTTON(buttonstick),stick);
     GtkWidget *buttonbox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
-
+    gtk_container_add(GTK_CONTAINER(buttonbox), buttonstick);
+    GtkWidget *fixed=gtk_fixed_new();
+    gtk_fixed_put(GTK_FIXED(fixed), buttonbox, 150, 50);
+    int y=550;
+    for (int i = 0; i < countDisc; i++)
+    {
+        gtk_fixed_put(GTK_FIXED(fixed), buttonsBox[i], 150, y);
+        y-=50;
+    }
+    gtk_container_add(GTK_CONTAINER(container), fixed);
 
     
 }
@@ -274,7 +282,7 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     gtk_layout_put(GTK_LAYOUT(container), image, 0, 0);
 
     // Add signals for exit game and resize image bg
-    g_signal_connect(window, "destroyed", G_CALLBACK(closeGame), NULL);
+    g_signal_connect(window, "destroy", G_CALLBACK(closeGame), NULL);
     g_signal_connect(container, "size-allocate", G_CALLBACK(resize_image), widgets);
 
     // Resize window.
@@ -282,7 +290,7 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
 
     gtk_widget_show_all(GTK_WIDGET(window));
     numberDisc();
-    
+    showTower(container);
 }
 
 // Window for show table score
@@ -420,4 +428,4 @@ int main (int argc, char **argv) {
     return status;
 }
 
-// Compiler gcc `pkg-config --cflags gtk+-3.0` -o hannoi hannoi.c `pkg-config --libs gtk+-3.0`
+// Compiler gcc `pkg-config --cflags gtk+-3.0` -o hannoi hannoi.c `pkg-config --libs gtk+-3.0` 

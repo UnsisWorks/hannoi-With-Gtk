@@ -86,5 +86,5 @@
 /* styles for disc */
 .button-disc {
     border-radius: 15%;
-    background: linear-gradient(0deg rgba(6, 211, 215, 0.98) rgb(0, 133, 140) 65%);
+    background: linear-gradient(0deg, rgba(6, 211, 215, 0.98), rgb(0, 133, 140) 65%);
 }
