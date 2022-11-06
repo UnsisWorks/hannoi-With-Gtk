@@ -51,7 +51,7 @@ int Pop (Pila *a) {
 }
 
 int EsLlena (Pila *a) {
-       if (a -> tope == MAX -1)        
+       if (a -> tope == MAXI -1)        
           return 1;
        else
            return 0;  
