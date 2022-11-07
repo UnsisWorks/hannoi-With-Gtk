@@ -93,6 +93,17 @@ static void buttonSelection(GtkWidget *widget, gpointer used_data){
         g_print("Selection: %d\n", selection);
       }
    }
+    if (Cima(&torreA) == selection) {
+        
+    } else if (Cima(&torreB) == selection) {
+        
+    } else if (Cima(&torreC) == selection) {
+        
+    } else {
+        puts("NO ES EL ULTIMO DISCO");
+        selection = -1;
+        // showMessage
+    }
 }
 /**
  * It checks if there's a selected disk, and if there is, it calls the validacion function with the

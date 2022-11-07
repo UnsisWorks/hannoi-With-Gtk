@@ -83,6 +83,7 @@
 .button-disc, .button-num-disc {
     background: linear-gradient(0deg, rgba(0, 22, 22, 0.98), rgb(0, 181, 190) 65%);
 }
+/* Making the disc round. */
 .button-disc{
     border-radius: 50%;
     margin: 0 0;
