@@ -69,13 +69,13 @@ static void showMessage (GtkWidget *widget, gchar *message, gchar *title) {
  */
 static int validation (int entry,Pila *pila ) {
     g_print("entry %d > cima: %d\n", entry, Cima(pila));
-    if (entry < Cima(pila)) {
+    if (entry > Cima(pila)) {
+        return 1;
+    } else {
+        //Push(entry,pila);
         showMessage(NULL, "No es posible colocar el disco en la torre", "Error");
         selection = -1;
         return 0;
-    } else {
-        Push(entry,pila);
-        return 1;
     }
 }
 
@@ -86,7 +86,7 @@ static int validation (int entry,Pila *pila ) {
  * @param used_data This is a pointer to the data that was passed to the g_signal_connect() function.
  */
 static void buttonSelection(GtkWidget *widget, gpointer used_data){
-   for (int i = 0; i < countDisc; i++) {
+   for (int i = 0; i <= countDisc; i++) {
       if (buttons[i] == widget) {
         selection = i;
         g_print("Selection: %d\n", selection);
@@ -102,10 +102,29 @@ static void buttonSelection(GtkWidget *widget, gpointer used_data){
  */
 static void evtTowerA(GtkWidget *widget, gpointer used_data){
     if (selection != -1) {
-        puts("Validar");
+        puts("Validar torre a");
         if (validation(selection, &torreA) == 1 ) {
-            puts("mover");
+            
+            
+            if (Cima(&torreA) == selection) {
+                g_print("cima a: %d == %d selection - ", Cima(&torreA), selection);
+                puts("POP TORRE A");
+                Push(Pop(&torreA), &torreA);
+            }
+            else if (Cima(&torreB) == selection) {
+                g_print("cima b: %d == %d selection - ", Cima(&torreB), selection);
+                puts("POP TORRE B");
+                Push(Pop(&torreB), &torreA);
+            }
+            else if (Cima(&torreC) == selection) {
+                g_print("cima c: %d == %d selection - ", Cima(&torreB), selection);
+                puts("POP TORRE C");
+                Push(Pop(&torreC), &torreA);
+            } else {
+                puts("Torre no encontrada");
+            }
             gtk_layout_move(GTK_LAYOUT(container), buttonsBox[selection], 210, 370);
+            g_print("CIMA TORRE A UPDATE: %d \n\n", Cima(&torreA));
         }
     } else {
         showMessage(NULL, "Primero debe seleccionar un disco", "Error");
@@ -120,10 +139,31 @@ static void evtTowerA(GtkWidget *widget, gpointer used_data){
  */
 static void evtTowerB(GtkWidget *widget, gpointer used_data){
     if (selection != -1) {
-        puts("Validar");
-        if (validation(selection, &torreA) == 1 ) {
-            gtk_layout_move(GTK_LAYOUT(container), buttonsBox[selection], 600, 370);
-            puts("mover");
+        puts("Validar torre b");
+        if (validation(selection, &torreB) == 1 ) {
+            
+            
+            if (Cima(&torreA) == selection) {
+                g_print("cima a: %d == %d selection - ", Cima(&torreA), selection);
+                puts("POP TORRE A");
+                Push(Pop(&torreA), &torreB);
+            }
+            else if (Cima(&torreB) == selection) {
+                g_print("cima b: %d == %d selection - ", Cima(&torreB), selection);
+                puts("POP TORRE B");
+                Push(Pop(&torreB), &torreB);
+            }
+            else if (Cima(&torreC) == selection) {
+                g_print("cima c: %d == %d selection - ", Cima(&torreB), selection);
+                puts("POP TORRE C");
+                Push(Pop(&torreC), &torreB);
+            } else {
+                puts("Torre no encontrada");
+            }
+            g_print("CIMA TORRE B UPDATE: %d \n\n", Cima(&torreB));
+            gtk_layout_move(GTK_LAYOUT(container), buttonsBox[selection], 720, 370);
+            
+            
         }
     } else {
         showMessage(NULL, "Primero debe seleccionar un disco", "Error");
@@ -138,10 +178,30 @@ static void evtTowerB(GtkWidget *widget, gpointer used_data){
  */
 static void evtTowerC(GtkWidget *widget, gpointer used_data){
     if (selection != -1) {
-        puts("Validar");
+        puts("Validar torre c");
         if (validation(selection, &torreC) == 1) {
-            gtk_layout_move(GTK_LAYOUT(container), buttonsBox[selection], 980, 370);
-            puts("mover");
+            
+            
+            if (Cima(&torreA) == selection) {
+                g_print("cima a: %d == %d selection - ", Cima(&torreA), selection);
+                puts("POP TORRE A");
+                Push(Pop(&torreA), &torreC);
+            }
+            else if (Cima(&torreB) == selection) {
+                g_print("cima b: %d == %d selection - ", Cima(&torreB), selection);
+                puts("POP TORRE B");
+                Push(Pop(&torreB), &torreC);
+            }
+            else if (Cima(&torreC) == selection) {
+                g_print("cima c: %d == %d selection - ", Cima(&torreB), selection);
+                puts("POP TORRE C");
+                Push(Pop(&torreC), &torreC);
+            } else {
+                puts("Torre no encontrada");
+            }
+
+            gtk_layout_move(GTK_LAYOUT(container), buttonsBox[selection], 1240, 370);
+            g_print("CIMA TORRE C UPDATE: %d \n\n", Cima(&torreC));
         }
     } else {
         showMessage(NULL, "Primero debe seleccionar un disco", "Error");
@@ -183,15 +243,15 @@ static void showtower(){
     g_signal_connect(buttonStickB, "clicked", G_CALLBACK(evtTowerB), NULL);
     g_signal_connect(buttonStickC, "clicked", G_CALLBACK(evtTowerC), NULL);
 
-    gtk_layout_put(GTK_LAYOUT(container), stickBoxA, 210, 115);
-    gtk_layout_put(GTK_LAYOUT(container), stickBoxB, 640, 115);
-    gtk_layout_put(GTK_LAYOUT(container), stickBoxC, 1070, 115);
+    gtk_layout_put(GTK_LAYOUT(container), stickBoxA, 330, 115);
+    gtk_layout_put(GTK_LAYOUT(container), stickBoxB, 750, 115);
+    gtk_layout_put(GTK_LAYOUT(container), stickBoxC, 1270, 115);
     
     int y = 430;
-    int x = 69;
+    int x = 190;
     int sendX = 0;
     int sendY = 0;
-    for (int i = 0; i < countDisc; i++)  {
+    for (int i = 0; i <= countDisc; i++)  {
         gtk_layout_put(GTK_LAYOUT(container), buttonsBox[i], x, y);
         if (i == 0) {
             x += 10;
@@ -229,13 +289,13 @@ static void create_pila(){
     imagesButtons[7]=gtk_image_new_from_file("./image/discos/Disco1.png");
 
     int id;
-    for (int i = 0; i < countDisc; i++) {
+    for (int i = 0; i <= countDisc; i++) {
         id=i;
         Push(id, &torreA);
         idButtons[i] = i;
         g_print("Indice %i: %d\n", i, i);
     }
-    for (int i = 0; i < id; i++) {
+    for (int i = 0; i <= countDisc; i++) {
 
         buttons[i] = gtk_button_new();
         gtk_button_set_image(GTK_BUTTON(buttons[i]), imagesButtons[i]);
@@ -249,6 +309,7 @@ static void create_pila(){
         gtk_style_context_add_class(gtk_widget_get_style_context(buttonsBox[i]), "container-button-disc");
     } 
     
+    g_print("CIMA DE TORRE A: %d \n", Cima(&torreA));
     showtower();
 }
 
@@ -312,7 +373,7 @@ static void closeGame() {
  * @param user_data This is a pointer to the data that you want to pass to the callback function.
  */
 static void selectedNumberCombo(GtkWidget *widget, gpointer user_data) {
-    countDisc = gtk_combo_box_get_active(GTK_COMBO_BOX(combo)) + 2;
+    countDisc = gtk_combo_box_get_active(GTK_COMBO_BOX(combo));
     gtk_widget_destroy(GTK_WIDGET(windowClose));
     g_print("numero: %d", countDisc);
     create_pila();
@@ -469,7 +530,7 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
 
     // Create window
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(window), 1200, 900);
+    gtk_window_set_default_size(GTK_WINDOW(window), 1700, 1000);
     container = gtk_layout_new(NULL, NULL);
     image = gtk_image_new();
 
