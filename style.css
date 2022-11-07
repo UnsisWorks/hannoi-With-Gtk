@@ -81,11 +81,11 @@
 }
 /* styles for disc */
 .button-disc, .button-num-disc {
-    background: linear-gradient(0deg, rgba(0, 22, 22, 0.98), rgb(0, 181, 190) 65%);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.98), rgb(0, 181, 190) 65%);
 }
 /* Making the disc round. */
 .button-disc{
-    border-radius: 50%;
+    border-radius: 47%;
     margin: 0 0;
     padding: 0 0;
     border-width: 0px;

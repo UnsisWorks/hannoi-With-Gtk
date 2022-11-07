@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "Pila.c"
-GtkWidget *mainWindow, *windowClose, *combo;
+GtkWidget *mainWindow, *windowClose, *combo, *windowGame;
 //Create global variables
 int idButtons[MAXI];
 gint countDisc = 0;
@@ -12,12 +12,6 @@ Pila torreB;
 Pila torreC;
 int selection = -1;
 GtkWidget *container = NULL;
-
-const gint Sensitivity = 1;
-
-const gint EvMask = GDK_BUTTON_PRESS_MASK | GDK_BUTTON1_MOTION_MASK;
-
-int offsetx, offsety, px, py, maxx, maxy;
 
 GtkWidget *buttons[MAXI];
 GtkWidget *buttonsBox[MAXI];
@@ -56,6 +50,15 @@ static void showMessage (GtkWidget *widget, gchar *message, gchar *title) {
     // Add witget and show result
     gtk_container_add(GTK_CONTAINER(contentArea), label);
     gtk_widget_show_all(dialog);
+}
+
+/**
+ * It checks if the tower C is full, if it is, it shows a message to the user
+ */
+static void winerGame () {
+    if (Cima(&torreC) ==  - 1) {
+        showMessage(NULL, "FELICIDAES, HAS GANADO!!!", "BIEN");
+    }
 }
 
 /**
@@ -137,8 +140,9 @@ static void evtTowerA(GtkWidget *widget, gpointer used_data){
             } else {
                 puts("Torre no encontrada");
             }
-            gtk_layout_move(GTK_LAYOUT(container), buttonsBox[selection], 210, 370);
+            gtk_layout_move(GTK_LAYOUT(container), buttonsBox[selection], 250, 370);
             g_print("CIMA TORRE A UPDATE: %d \n\n", Cima(&torreA));
+            winerGame();
         }
     } else {
         showMessage(NULL, "Primero debe seleccionar un disco", "Error");
@@ -175,9 +179,8 @@ static void evtTowerB(GtkWidget *widget, gpointer used_data){
                 puts("Torre no encontrada");
             }
             g_print("CIMA TORRE B UPDATE: %d \n\n", Cima(&torreB));
-            gtk_layout_move(GTK_LAYOUT(container), buttonsBox[selection], 720, 370);
-            
-            
+            gtk_layout_move(GTK_LAYOUT(container), buttonsBox[selection], 705, 370);
+            winerGame();
         }
           
     } else {
@@ -215,7 +218,8 @@ static void evtTowerC(GtkWidget *widget, gpointer used_data){
                 puts("Torre no encontrada");
             }
 
-            gtk_layout_move(GTK_LAYOUT(container), buttonsBox[selection], 1240, 370);
+            gtk_layout_move(GTK_LAYOUT(container), buttonsBox[selection], 1210, 370);
+            winerGame();
             g_print("CIMA TORRE C UPDATE: %d \n\n", Cima(&torreC));
         }
     } else {
@@ -262,7 +266,7 @@ static void showtower(){
     gtk_layout_put(GTK_LAYOUT(container), stickBoxB, 750, 115);
     gtk_layout_put(GTK_LAYOUT(container), stickBoxC, 1270, 115);
     
-    int y = 430;
+    int y = 650;
     int x = 190;
     int sendX = 0;
     int sendY = 0;
@@ -333,6 +337,8 @@ void funtionCloseGameYes(GtkWidget *witget, gpointer user_data){
 }
 static void funtionCloseGameNo(GtkWidget *witget, gpointer user_data){
     gtk_widget_destroy(GTK_WIDGET(windowClose));
+    // gtk_widget_destroy(GTK_WIDGET(windowGame));
+    gtk_widget_set_visible(GTK_WIDGET(mainWindow), TRUE);
 }
 
 
@@ -394,7 +400,10 @@ static void selectedNumberCombo(GtkWidget *widget, gpointer user_data) {
     create_pila();
 
 }
-
+static void closeNumDisc(GtkWidget *widget, gpointer user_data) {
+    gtk_widget_set_visible(GTK_WIDGET(mainWindow), TRUE);
+    gtk_widget_destroy(GTK_WIDGET(windowGame));
+}
 /**
  * It creates a window with a combo box that allows the user to select the number of discs to be used
  * in the game
@@ -433,6 +442,7 @@ static void numberDisc() {
     gtk_container_add(GTK_CONTAINER(windowClose), box);
 
     g_signal_connect(button, "clicked", G_CALLBACK(selectedNumberCombo), NULL);
+    // g_signal_connect(windowClose, "destroy", G_CALLBACK(closeNumDisc), NULL);
 
     // Add widgets at window
     gtk_fixed_put(GTK_FIXED(fixed), label, 40, 30);
@@ -537,15 +547,14 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     // pthread_create(&initTimer, NULL, &timer, NULL);
 
     // Create widgets needed
-    GtkWidget *window = NULL;
     GtkWidget *image = NULL;
     
     GdkPixbuf *pixbuf = NULL;
     ResizeWidgets *widgets;
 
     // Create window
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(window), 1700, 1000);
+    windowGame = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_default_size(GTK_WINDOW(windowGame), 1700, 1000);
     container = gtk_layout_new(NULL, NULL);
     image = gtk_image_new();
 
@@ -561,15 +570,15 @@ static void initGame(GtkWidget *widget, GtkWidget *gData) {
     widgets->pixbuf = pixbuf;
 
     // Set layaut at window
-    gtk_container_add(GTK_CONTAINER(window), container);
+    gtk_container_add(GTK_CONTAINER(windowGame), container);
     gtk_layout_put(GTK_LAYOUT(container), image, 0, 0);
 
     // Add signals for exit game and resize image bg
-    g_signal_connect(window, "destroy", G_CALLBACK(closeGame), NULL);
+    g_signal_connect(windowGame, "destroy", G_CALLBACK(closeGame), NULL);
     g_signal_connect(container, "size-allocate", G_CALLBACK(resize_image), widgets);
 
     // Resize window.
-    gtk_widget_show_all(GTK_WIDGET(window));
+    gtk_widget_show_all(GTK_WIDGET(windowGame));
 
     numberDisc();
     
@@ -665,7 +674,11 @@ static void activate (GtkApplication *app, gpointer user_data) {
     // Add signals at buttons
     g_signal_connect(buttonPlay, "clicked", G_CALLBACK(initGame), NULL);
     g_signal_connect(buttonAcer, "clicked", G_CALLBACK(acercaDe), NULL);
-    g_signal_connect(buttonScore, "clicked", G_CALLBACK(windowScore), NULL);
+    // g_signal_connect(buttonScore, "clicked", G_CALLBACK(windowScore), NULL);
+    g_signal_connect(buttonExit, "clicked", G_CALLBACK(closeGame), NULL);
+
+    gtk_widget_set_sensitive (GTK_WIDGET(buttonScore), FALSE);
+    gtk_widget_set_sensitive (GTK_WIDGET(buttonHelp), FALSE);
 
     // Add buttons  at button box
     gtk_container_add(GTK_CONTAINER(buttBoxAcer), buttonAcer);
