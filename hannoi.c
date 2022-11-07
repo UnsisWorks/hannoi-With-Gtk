@@ -68,6 +68,7 @@ static void showMessage (GtkWidget *widget, gchar *message, gchar *title) {
  * @return the value of the variable selection.
  */
 static int validation (int entry,Pila *pila ) {
+
     g_print("entry %d > cima: %d\n", entry, Cima(pila));
     if (entry > Cima(pila)) {
         return 1;
@@ -102,7 +103,9 @@ static void buttonSelection(GtkWidget *widget, gpointer used_data){
  */
 static void evtTowerA(GtkWidget *widget, gpointer used_data){
     if (selection != -1) {
+        
         puts("Validar torre a");
+        
         if (validation(selection, &torreA) == 1 ) {
             
             
@@ -140,8 +143,8 @@ static void evtTowerA(GtkWidget *widget, gpointer used_data){
 static void evtTowerB(GtkWidget *widget, gpointer used_data){
     if (selection != -1) {
         puts("Validar torre b");
+        
         if (validation(selection, &torreB) == 1 ) {
-            
             
             if (Cima(&torreA) == selection) {
                 g_print("cima a: %d == %d selection - ", Cima(&torreA), selection);
@@ -165,6 +168,7 @@ static void evtTowerB(GtkWidget *widget, gpointer used_data){
             
             
         }
+          
     } else {
         showMessage(NULL, "Primero debe seleccionar un disco", "Error");
     }
