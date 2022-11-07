@@ -56,7 +56,7 @@ static void showMessage (GtkWidget *widget, gchar *message, gchar *title) {
  * It checks if the tower C is full, if it is, it shows a message to the user
  */
 static void winerGame () {
-    if (Cima(&torreC) ==  - 1) {
+    if (torreC.tope == countDisc) {
         showMessage(NULL, "FELICIDAES, HAS GANADO!!!", "BIEN");
     }
 }
@@ -423,7 +423,6 @@ static void numberDisc() {
     // Create checkBox for selected number disc
     combo = gtk_combo_box_text_new();
 
-    gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t1");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t2");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t3");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo), "\t4");
@@ -523,11 +522,13 @@ gboolean resize_image(GtkWidget *widget, GdkRectangle *allocation, gpointer user
 static void exit_data(GtkWidget *gidget, gpointer user_data) {
 }
 static void acercaDe () {
-    GtkWidget *window;
+    GtkWidget *window, *image;
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_default_size(GTK_WINDOW(window), 600, 800);
     gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 
+    image = gtk_image_new_from_file("./image/AVATARES.png");
+    gtk_container_add(GTK_CONTAINER(window), image);
     gtk_widget_show_all(GTK_WIDGET(window));
 }
 

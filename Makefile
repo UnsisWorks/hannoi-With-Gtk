@@ -1,8 +1,8 @@
 
 CC = gcc
-CFLAGS = -g -Wall
-CFLAGS2 = 'pkg-config --cflags gtk+-3.0'
-CFLAGS3 = 'pkg-config --libs gtk+-3.0´ 
+# CFLAGS = -o
+CFLAGS2 = `pkg-config --cflags gtk+-3.0`
+CFLAGS3 = `pkg-config --libs gtk+-3.0`
 SRC = hannoi.c Pila.c Pila.h
 OBJ = hannoi.c
 
@@ -10,9 +10,9 @@ OBJ = hannoi.c
 # Reglas explicitas
 
 all: $(OBJ)
-	$(CC) $(CFLAGS) -o hannoi $(OBJ)
+	$(CC) $(CFLAGS2) -o hannoi $(OBJ) $(CFLAGS3) 
 clean:
-	$(RM) $(OBJ) main
+	$(RM) hannoi
 
 # Reglas implicitas
 
