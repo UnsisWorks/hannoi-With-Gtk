@@ -1,4 +1,4 @@
-\babel@toc {spanish}{}
+\babel@toc {spanish}{}\relax 
 \contentsline {section}{\numberline {1}Introducción}{2}{section.1}%
 \contentsline {section}{\numberline {2}Descripción del juego}{2}{section.2}%
 \contentsline {section}{\numberline {3}Desarrollo}{2}{section.3}%
